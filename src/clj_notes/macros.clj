@@ -228,7 +228,7 @@
 (first (.split (.replace (.toUpperCase "a b c d") "A" "X") " "))
 ;; "X"
 
-;; ;; Perhaps easier to read:
+;; Perhaps easier to read:
 ;; -> 后面是初始参数,第2行开始每一行是一个函数调用,
 ;; 且上一行的返回值会作为这一行第一个参数(这就是thread first)的first含义
 ;; 这里的thread是管道的意思,而不是并发编程的线程

@@ -15,3 +15,6 @@
     (println "done.")))
 
 (throw (Exception. "error message"))
+
+;; ex-data
+;; ex-info

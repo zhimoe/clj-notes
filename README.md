@@ -1,4 +1,5 @@
 # clj-notes
+
 clojure notes and tips
 
 ```clojure
@@ -13,3 +14,6 @@ clojure notes and tips
 ;; protocols, records and types
 ```
 
+## best readings
+
+https://github.com/matthiasn/clojure-system-book/blob/master/manuscript/Architecture-Overview.md

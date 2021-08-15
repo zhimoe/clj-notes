@@ -2,12 +2,10 @@
   (:import (java.util Set Date Calendar Random)
            (java.text SimpleDateFormat)))
 
-;; Java
 ;; import
-(import 'Date)
+(import 'java.util.Date)
 (import '(org.apache.hadoop.hbase.client HTable Scan)
         '(java.util.function BiFunction Consumer))
-
 
 ;; Instantiation
 ;; (new ClassName args*)
@@ -17,9 +15,11 @@
 
 ;; access java members(method,field)
 ;; (. ClassSymbol methodSymbol args*)
-;; (. ClassSymbol (methodSymbol args*)) ;;useful when is macro
+;; (. ClassSymbol (methodSymbol args*)) ;;useful when in macro
 ;; (. instanceExpr methodSymbol args*)
-;; (. instanceExpr (methodSymbol args*)) ;;useful when is macro
+;; (. instanceExpr (methodSymbol args*)) ;;useful when in macro
+
+;; if the member is start with "-", it will resolve only as field access,不会被识别为方法
 
 ;; the dot special form can be read as "in the scope of."
 ;; e.g. in the scope of System ,get the env of PATH
@@ -72,8 +72,11 @@
       (.set Calendar/HOUR 0)
       (.set Calendar/MINUTE 0)
       (.set Calendar/SECOND 0)
-      (.set Calendar/MILLISECOND 0))
-    (.getTime calendar-obj)))
+      (.set Calendar/MILLISECOND 0)
+      (.getTime)
+      )
+    )
+  )
 
 ;; memfn make java method as function
 (map #(.getBytes %) ["amit" "rob" "kyle"])
@@ -81,115 +84,6 @@
 ;; 使用memfn和type hint，将getBytes变成一个高阶函数
 (map (memfn ^String getBytes) ["amit" "rob" "kyle"])
 (memfn subSequence start end)                               ;; 这是一个普通的clojure函数
-
-;; bean 可以将java对象转为map
-(bean (Calendar/getInstance))
-
-;; tokens is java array
-(def tokens (.split "clojure.in.action" "\\."))             ;;type=> [Ljava.lang.String;
-(alength tokens)
-(aget tokens 2)
-(aset tokens 2 "actionable")
-;; clojure seq to java array
-;; (to-array, to-array-2d, and into-array)
-;; (make-array) to create java array
-;; also amap and areduce for array
-
-;; 异常处理
-
-
-;; 高级话题
-;; 实现java interface
-
-;; 处理Java方法重载
-;; clojure 是动态语言，如果一个java方法使用参数类型重载，那么clojure无法识别
-;; 例如，JDK11在java.util.Collection.toArray(IntFunction<T[]> generator),
-;; 没有type hints，clojure会抛出 illegalArgumentException
-
-
-;; 调用Java
-;; import java class
-(import Date)
-(println (str (new Date)))
-;; Wed Jul 24 22:55:24 CST 2019
-
-(new Date "2016/2/19")
-(Date.)
-(Date. "2016/2/19")
-(Math/pow 2 3)                                              ;; static method
-(def rnd (new Random))
-(. rnd nextInt 10)
-
-(let [date1 (new Date)
-      date2 (new Date)]
-  (.equals date1 date2))
-
-
-
-;; ;; ;; Java方法调用
-;; import
-;; (import & import-symbols-or-lists)
-(import 'java.util.Date 'java.text.SimpleDateFormat)
-(import '[java.util Date Set])
-(ns clj-notes.core
-  (:import (java.util Set Date Calendar TimeZone)
-           (java.util.concurrent ConcurrentHashMap)))
-
-;; new a instance
-(def sdf (new SimpleDateFormat "yyyy-MM-dd"))
-;; or
-(def sdf-dot (SimpleDateFormat. "yyyy-MM-dd"))
-
-;; call instance method
-(.parse sdf date-string)
-;; or use dot-form, see more on below
-(. sdf parse "2019-10-03")
-
-;; access static method/field
-;; (ClassName/staticMethod args*)
-;; (ClassName/staticField)
-
-;; nested class
-(.getEnclosingClass java.util.Map$Entry)
-;; -> java.util.Map
-
-;; dot special form
-;; all above java call style are expanded into calls to the dot operator (described below) at macroexpansion time.
-;;  The expansions are as follows
-(.instanceMember instance args*)
-;; ==> (. instance instanceMember args*)
-(.instanceMember ClassName args*)
-;; ==>(. (identity ClassName) instanceMember args*)
-(.-instanceField instance)
-;; ==> (. instance -instanceField)
-(ClassName/staticMethod args*)
-;; ==> (. ClassName staticMethod args*)
-(ClassName/staticField)
-;; ==> (. ClassName staticField)
-
-;;  general forms, dot read as 'in the scope of'
-;; (. ClassName member)
-;; (. instanceExpr member)
-;;  if the member is start with "-", it will resolve only as field access,不会被识别为方法
-
-
-;; dot-dot
-(import 'java.util.Calendar)
-(. (. (Calendar/getInstance) getTimeZone) getDisplayName)
-;; use .. macro chain the calls
-(.. (Calendar/getInstance)
-    getTimeZone
-    (getDisplayName true TimeZone/SHORT))
-
-;;  doto macro
-(doto calendar-obj
-  (.set Calendar/AM_PM Calendar/AM)
-  (.set Calendar/HOUR 0)
-  (.set Calendar/MINUTE 0)
-  (.set Calendar/SECOND 0)
-  (.set Calendar/MILLISECOND 0))
-
-
 ;;  (memfn methodNm) 用于提示参数有这个methodNm
 (map (memfn getBytes) ["amit" "rob" "kyle"])
 ;; ==
@@ -201,16 +95,34 @@
 ;; "Elapsed time: 74.903093 msecs"
 ;;  see the source of memfn
 
-;; bean convert java bean to map
+;; bean 可以将java对象转为map
 (bean (Calendar/getInstance))
 
+;; tokens is java array
+(def tokens (.split "clojure.in.action" "\\."))             ;;type=> [Ljava.lang.String;
+(type tokens)
+;; => [Ljava.lang.String
+(alength tokens)
+(aget tokens 2)
+(aset tokens 2 "actionable")
+;; clojure seq to java array
+;; (to-array, to-array-2d, and into-array)
+;; (make-array) to create java array
+;; also amap and areduce for array
 
-;; ;; ;;  java array
-(def tokens (.split "clojure.in.action" "\\."))
-;; #'user/tokens
-;; user=> (type tokens)
-;; [Ljava.lang.String;;
-;;  alength,aget,aset function for java array, caution! java array is mutable
+;; nested class
+(.getEnclosingClass java.util.Map$Entry)
+;; -> java.util.Map
 
+;; 异常处理
+
+
+;; 高级话题
+;; 实现java interface
+
+;; 处理Java方法重载
+;; clojure 是动态语言，如果一个java方法使用参数类型重载，那么clojure无法识别
+;; 例如，JDK11在java.util.Collection.toArray(IntFunction<T[]> generator),
+;; 没有type hints，clojure会抛出 illegalArgumentException
 
 

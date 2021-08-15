@@ -4,7 +4,7 @@
 ;; todo: 多重方法defmulti/defmethod
 ;; todo: modifiers
 
-;;
+;; function template
 ;;(defn function-name
 ;;  doc-string?
 ;;  metadata-map?
@@ -28,12 +28,11 @@
 ;; (defmulti name docstring? attr-map? dispatch-fn & options)
 
 (defmulti
-  ^{:doc "Internal helper for copy"
-    :private true
+  ^{:doc      "Internal helper for copy"
+    :private  true
     :arglists '([input output opts])}
   do-copy
   (fn [input output opts] [(type input) (type output)]))
-
 
 ;; function and destructuring example
 (defn des
@@ -79,8 +78,7 @@
   "first arg is msg and other arguments are stored in args,args is a seq"
   [msg & args]
   (println "msg=" msg ",and rest args=" (map #(str "*" %1 "*") args)))
-
-;; user=> (log "hi" "jim" "bella")
+(log "hi" "jim" "bella")
 ;; msg= hi ,and rest args= (*jim* *bella*)
 
 ;; 命名参数 named params , achieved by Variadic Functions parameters destructing
@@ -95,13 +93,13 @@
 ;; => ["Robert" "Engineer" "$0.00"]
 
 ;; Without the use of a variadic argument list,
-;; you would have to call the function with a single map argument such as
 (defn job-info-map
   [{:keys [name job income] :or {job "unemployed" income "$0.00"}}]
   (if name
     [name job income]
     (println "No name specified")))
-
+;; 如果没有&， 则这个方法实参必须是map，变成了普通的map destructing
+;; you would have to call the function with a single map argument such as
 (job-info-map {:name "Robert" :job "Engineer"})
 ;; => ["Robert" "Engineer" "$0.00"]
 
@@ -117,7 +115,7 @@
 ;; a= 1 b= 2 the-rest= (3)
 (let [[:as all] my-vec]
   (println all))
-;; [1 2 3]`
+;; [1 2 3]
 (let [[a :as all] my-vec]
   (println a all))
 ;; 1 [1 2 3]
@@ -145,7 +143,7 @@
   (with-open [rdr (clojure.java.io/reader file)]
     (count (line-seq rdr))))
 
-;; :as bind entire map to param
+;; :as bind entire map to param that followed :as
 ;; See https://github.com/ring-clojure/ring/wiki/File-Uploads for explanation
 (defn file-handler
   "argument is a map,:as request binding the arg to request var,而

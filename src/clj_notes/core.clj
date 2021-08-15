@@ -4,7 +4,8 @@
            (java.util Date Random)))
 ;; :gen-class generate java class file
 ;; 数据类型
-;; BigInteger,N is a literal for BigInteger,M is BigDecimal
+;; clojure.lang.BigInt(like java BigInteger),N is literal for BigInt,
+;; M is literal for BigDecimal
 (+ 9223372036854775807 10N)                                 ;; 9223372036854775817N
 (+ 98765431123456789.1 10M)                                 ;; 9.87654311234568E16
 
@@ -61,6 +62,19 @@
 ;; ns macro creates a new namespace and
 ;;  gives you an opportunity to load other namespaces at the creation time
 
+;; str
+(let [first "Hirokuni"
+      last "Kim"]
+  (str "My name is " first " " last))
+
+;; format
+(format "My name is %s %s" "Hirokuni" "Kim")
+
+;; power function
+(defn power
+  [x n]
+  (reduce * (repeat n x)))
+
 ;; ;; ;; Recursion
 ;; simple recursion, don't call it!
 (defn fibo
@@ -82,7 +96,7 @@
     ;; fibo is an inner function
     (fibo 0N 1N 0)))
 
-(println (fibo-recur 1000))
+(println (fibo-recur 100))
 ;; it is really fast
 ;; notes
 ;; with simple recursion, each recursive call creates a stack frame which is 
@@ -101,4 +115,6 @@
 ;; so Clojure chose recursions.
 ;; Although you can write code that looks like an imperative loop with loop/recur,
 ;; Clojure is doing recursion under the hood.
+
+(comment these will be ignored, no matter with/without quote)
 

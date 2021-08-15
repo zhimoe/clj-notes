@@ -6,6 +6,30 @@
 ;; map filter是函数
 ;; case if-let if-not when when-not when-let doseq doall let cond condp while loop for cond-> cond->>全部是macro
 ;; (if test consequent alternative)
+(if true
+  (println "executed when true")
+  (println "executed when false"))
+;; use do to execute multi expressions
+(if true
+  (do
+    (println "one")
+    (println "two")))
+
+;; if-let
+(defn positive-number [numbers]
+  (if-let [pos-nums (not-empty (filter pos? numbers))]
+    pos-nums
+    "no positive numbers"))
+
+;; when when-let case cond condp
+(defn cond-test
+  [n]
+  (cond
+    (= n 1) "n is 1"
+    (and (> n 3) (< n 10)) "n is over 3 and under 10"
+    :else "n is other"))                                    ;;:else is true, you can use any keyword
+
+(cond-test 1000)
 ;; (cond & clauses)
 (def x 10)
 (cond
@@ -31,6 +55,7 @@
 (< '(1 2 3))
 ;; = 比较
 ;; == only compare integer (including ratio), big decimal, and floating point.
+;;
 (== 2M 1.9999999999999)
 ;;=> false
 (== 2M 1.9999999999999999999999999999999999999999999999)
@@ -77,66 +102,3 @@
   y)
 
 ;; cond-> and cond->>
-
-
-;; if
-(if true
-  (println "executed when true")
-  (println "executed when false"))
-
-;; use do to execute multi expressions
-(if true
-  (do
-    (println "one")
-    (println "two")))
-
-;; if-let:
-(defn positive-number [numbers]
-  (if-let [pos-nums (not-empty (filter pos? numbers))]
-    pos-nums
-    "no positive numbers"))
-
-;; when when-let case cond condp
-(defn cond-test
-  [n]
-  (cond
-    (= n 1) "n is 1"
-    (and (> n 3) (< n 10)) "n is over 3 and under 10"
-    :else "n is other"))
-
-(cond-test 1000)
-
-;; str
-(let [first "Hirokuni"
-      last "Kim"]
-  (str "My name is " first " " last))
-
-;; format
-(format "My name is %s %s" "Hirokuni" "Kim")
-
-;; power function
-(defn power
-  [x n]
-  (reduce * (repeat n x)))
-
-
-;; for compression
-(for [x '(1 2 3)]
-  (+ 10 x))
-
-;; (doc for)
-;; 双重for 循环
-(for [x (range 10)
-      y (range 20)
-      :while (< y x)]
-  [x y])
-
-;; <==> {x | x >0}
-(for [x '(-1 1 2)
-      :when (> x 0)]
-  x)
-
-(for [x [0 1 2 3 4 5]
-      :let [y (* x 3)]
-      :when (even? y)]
-  y)
