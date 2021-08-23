@@ -1,4 +1,5 @@
-(ns clj-notes.files)
+(ns clj-notes.files
+  (:import (java.io IOException)))
 
 ;; Clojure will return the result of the last form evaluated in a function
 ;; pr/prn is to reader, so 不会执行控制符
@@ -79,3 +80,4 @@
   "Return the .getName property of a sequence of files"
   [file-s]
   (map #(.getName %) file-s))
+

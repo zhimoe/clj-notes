@@ -15,7 +15,7 @@
     (comment "all done - terminate")))
 
 ;; 可以生成序列的结构称为 Seqable
-;; =======start
+;; ======start
 ;; 几乎一切数据结构在clojure中都是序列，这些数据结构包括：
 ;; All iterable types (types that implement java.util.Iterable)
 ;; Java collections (java.util.Set, java.util.List, etc)
@@ -26,7 +26,7 @@
 ;; clojure.lang.ISeq - the sequence abstraction interface,更常用的是clojure.lang.ASeq,clojure.lang.LazySeq
 ;; clojure.lang.Seqable - seqable marker,只有一个方法:ISeq seq()
 ;; clojure.lang.Sequential - 遍历顺序和初始化顺序一致,Lists, vectors, and effectively all seqs are sequential.
-;; =======end
+;; ======end
 
 ;; Sequence functions (map, filter, etc) 会隐式call seq on the incoming (seqable) collection and
 ;; return a sequence (possibly empty, not nil)

@@ -1,11 +1,5 @@
 (ns clj-notes.concurrency)
-
-
-
-
-;; ;; ;; 并发编程
-
-;; ;; ;; future and deref
+;; future
 (let [future-val (future (inc 1))]
   (println (deref future-val)))
 ;; deref == @
@@ -57,4 +51,3 @@
     (throw (Exception. "something wrong happens!"))
     (swap! user-record merge {:age 32}))
 
-;; ;; ;; 并发编程
